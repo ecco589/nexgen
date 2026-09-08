@@ -55,7 +55,7 @@
 </head>
 <body>
   <header>
-    <div class="kicker">Laboratory Demo</div>
+    <div class="kicker" id="kicker">Laboratory Demo</div>
     <h1>NexGen</h1>
   </header>
   <div class="mouth-wrap"><img id="face" alt="mouth" /></div>
@@ -88,6 +88,21 @@
     let outGain = null;
 
     face.src = IDLE;
+
+    const kicker = document.getElementById("kicker");
+    function pingNet() {
+      const t0 = performance.now();
+      fetch(API + "/api/health?t=" + Date.now(), { cache: "no-store" })
+        .then((r) => {
+          if (!r.ok) throw new Error("health");
+          kicker.textContent = "Laboratory Demo  ·  " + Math.round(performance.now() - t0) + " ms";
+        })
+        .catch(() => {
+          kicker.textContent = "Laboratory Demo  ·  —";
+        });
+    }
+    pingNet();
+    setInterval(pingNet, 2500);
 
     function canMic() {
       return window.isSecureContext || location.hostname === "localhost" || location.hostname === "127.0.0.1";
